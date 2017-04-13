@@ -17,9 +17,9 @@ let s = {
 sF = {
   self: this,
 	getWeather: function(search){
-    search = 'q=' + search
 		$.getJSON(`http://api.openweathermap.org/data/2.5/forecast?${search}&type=like&${s.weatherAPIKey}`,function(data){
 				s.object = data.list;
+				s.city = data.city;
         console.log("test")
 				sF.parseWeather(s.object);
         //populate boxes
@@ -36,6 +36,9 @@ sF = {
 		day.weather = data[i].weather[0].main;
 		day.temp = ((data[i].main.temp*(9/5))-459.67).toFixed(0);
 		day.windSpeed = data[i].wind.speed;
+		day.location = 'This is your city';
+		day.positionLat = s.city.coord.lat;	
+		day.positionLon = s.city.coord.lon;	
 		s.weather.push(day);
 		}
 	},
@@ -43,10 +46,12 @@ sF = {
 	geolocate: function() {
 		let location = navigator.geolocation.getCurrentPosition(function(position) {
       console.log("Running geolocation");
+			
 			let lat = `lat=${position.coords.latitude}`;
 			let lon = `lon=${position.coords.longitude}`;
 			let input = `${lat}&${lon}`;
 			sF.getWeather(input);
+			console.log(input);
 		});
 	}
 };
@@ -55,6 +60,7 @@ sF = {
 vF = {
   //populate the windows
   populateWeatherBoxes: function(){
+    $('#heroLocation').html(`<p>Latitude: ${(s.weather[0].positionLat).toFixed(2)}</p><br><p>Longitude: ${(s.weather[0].positionLon).toFixed(2)}</p>`);
     $('#heroBox').html(`<img src='http://openweathermap.org/img/w/${s.weather[0].icon}.png'><br>${s.weather[0].weather}`);
     $('#heroData').html(`<span>Temperature: ${s.weather[0].temp}</span><br>
                          <span>Wind Speed: ${s.weather[0].windSpeed}</span>`)
@@ -69,13 +75,12 @@ $('#search-field').keypress(function(event){
   //console.log(event.charCode);
   if(event.charCode=='13'){
     event.preventDefault();
-    sF.getWeather($(this).val().toString())
-
+		var inputSearch = `q=${$(this).val().toString()}`;
+    sF.getWeather(inputSearch);
   }
 })
 
 $('#geoLocate').click(function(event) {
 	sF.geolocate();
   event.preventDefault();
-
 });
