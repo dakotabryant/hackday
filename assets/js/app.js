@@ -1,10 +1,9 @@
-//TEMPLATES
 //state object
 let s = {
 	object : {},
   weather: [],
-		
-  weatherAPIKey: 'appid=22bb9867ef69b1e3bad17c9e2f85d1a1',
+									      
+  weatherAPIKey: 'appid=123456797fasdfasdfakjhiue893487h',
   geoKey: 'key=AIzaSyDaLi4kejMskpWXIeVQwXWMviWSoj-ZQOA',
   weatherIcons: {
     sunny: `<i class="wi wi-day-sunny "></i>`,
