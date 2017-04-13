@@ -2,8 +2,8 @@
 let s = {
 	object : {},
   weather: [],
-									      
-  weatherAPIKey: 'appid=123456797fasdfasdfakjhiue893487h',
+
+  weatherAPIKey: 'appid=22bb9867ef69b1e3bad17c9e2f85d1a1',
   geoKey: 'key=AIzaSyDaLi4kejMskpWXIeVQwXWMviWSoj-ZQOA',
   weatherIcons: {
     sunny: `<i class="wi wi-day-sunny "></i>`,
@@ -15,28 +15,34 @@ let s = {
 }
 //state manipulation functions
 sF = {
+  self: this,
 	getWeather: function(search){
-		$.getJSON(`http://api.openweathermap.org/data/2.5/forecast?q=${search}&type=like&${s.weatherAPIKey}`,function(data){
+    search = 'q=' + search
+		$.getJSON(`http://api.openweathermap.org/data/2.5/forecast?${search}&type=like&${s.weatherAPIKey}`,function(data){
 				s.object = data.list;
-				//console.dir(s.weather);
-				//vF.populateWeatherBoxes();
+        console.log("test")
+				sF.parseWeather(s.object);
+        //populate boxes
+        vF.populateWeatherBoxes()
 		});
   },
-	
-	parseWeather: function(data) {	
+
+	parseWeather: function(data) {
+    s.weather = [];
 		for(let i=4;i<40;i+=8){
 			var day = {};
 		day.id = data[i].weather[0].id;
+    day.icon = data[i].weather[0].icon;
 		day.weather = data[i].weather[0].main;
-		day.temp = data[i].main.temp;
-		day.windspeed = data[i].wind.speed;
+		day.temp = ((data[i].main.temp*(9/5))-459.67).toFixed(0);
+		day.windSpeed = data[i].wind.speed;
 		s.weather.push(day);
 		}
-		
 	},
-	
+
 	geolocate: function() {
-		let location = navigator.geolocation.watchPosition(function(position) {
+		let location = navigator.geolocation.getCurrentPosition(function(position) {
+      console.log("Running geolocation");
 			let lat = `lat=${position.coords.latitude}`;
 			let lon = `lon=${position.coords.longitude}`;
 			let input = `${lat}&${lon}`;
@@ -46,37 +52,30 @@ sF = {
 };
 
 //view manipulation functions
-//vF = {
-//  populateWeatherBoxes(){
-//    $("#heroBox").html(vF.getWeatherIcon(s.weather[0].weather[0]));
-//    $("#box1").html(vF.getWeatherIcon(s.weather[1].weather[0]));
-//    $("#box2").html(vF.getWeatherIcon(s.weather[2].weather[0]))
-//    $("#box3").html(vF.getWeatherIcon(s.weather[3].weather[0]))
-//    $("#box4").html(vF.getWeatherIcon(s.weather[4].weather[0]))
-//  },
-//  getWeatherIcon(index){
-//    console.log("Logging index:")
-//    console.log(index);
-//    if(index.id >=800 && index.id<=802){
-//      return s.weatherIcons.sunny + " " + index.description;
-//    }else if(index.id >= 803 && index.id<=804){
-//      return s.weatherIcons.cloudy+ " " + index.description;
-//    }else if(index.id >= 300 && index.id<=531){
-//      return s.weatherIcons.rainy+ " " + index.description;
-//    }
-//    console.log("logging id:")
-//    console.log(index.id)
-//  }
-//}
+vF = {
+  //populate the windows
+  populateWeatherBoxes: function(){
+    $('#heroBox').html(`<img src='http://openweathermap.org/img/w/${s.weather[0].icon}.png'><br>${s.weather[0].weather}`);
+    $('#heroData').html(`<span>Temperature: ${s.weather[0].temp}</span><br>
+                         <span>Wind Speed: ${s.weather[0].windSpeed}</span>`)
+    $('#box1').html(`<img src='http://openweathermap.org/img/w/${s.weather[1].icon}.png'><br>${s.weather[1].weather}`);
+    $('#box2').html(`<img src='http://openweathermap.org/img/w/${s.weather[2].icon}.png'><br>${s.weather[2].weather}`);
+    $('#box3').html(`<img src='http://openweathermap.org/img/w/${s.weather[3].icon}.png'><br>${s.weather[3].weather}`);
+    $('#box4').html(`<img src='http://openweathermap.org/img/w/${s.weather[4].icon}.png'><br>${s.weather[4].weather}`);
+  }
+}
 
 $('#search-field').keypress(function(event){
   //console.log(event.charCode);
   if(event.charCode=='13'){
+    event.preventDefault();
     sF.getWeather($(this).val().toString())
+
   }
 })
 
 $('#geoLocate').click(function(event) {
 	sF.geolocate();
+  event.preventDefault();
 
 });

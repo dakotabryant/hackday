@@ -1,8 +1,23 @@
 div{
-  border: 1px dotted black;
+
 }
 
 .wi{
   font-size: 5em;
   color: darkorange;
+}
+
+div img{
+  min-width: 120px;
+}
+
+main{
+
+  max-width: 640px;
+  margin: auto;
+
+}
+
+body{
+  padding-top: 100px;
 }
