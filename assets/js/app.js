@@ -13,7 +13,17 @@ getWeather: function(search){
       console.dir(s.weather);
     });
 
-  }
+  },
+geolocate: function() {
+	let location = navigator.geolocation.watchPosition(function(position) {
+		let lat = `lat=${position.coords.latitude}`;
+		let lon = `lon=${position.coords.longitude}`;
+		let input = `${lat}&${lon}`;
+		sF.getWeather(input);
+	});	
+}
+	
+	
 }
 
 //view manipulation functions
@@ -24,6 +34,10 @@ vF = {
 $('#search-field').keypress(function(event){
   console.log(event.charCode);
   if(event.charCode=='13'){
-    sF.getWeather($(this).val())
+    sF.getWeather($(this).val().toString())
   }
 })
+
+$('#geoLocate').click(function(event) {
+	sF.geolocate();
+});
