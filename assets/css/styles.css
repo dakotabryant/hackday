@@ -1,3 +1,8 @@
 div{
-  border: 1px solid black;
+  border: 1px dotted black;
+}
+
+.wi{
+  font-size: 5em;
+  color: darkorange;
 }
