@@ -13,14 +13,15 @@ let s = {
     snow: `<i class="wi wi-snow"></i>`,
   }
 }
+
 //state manipulation functions
 sF = {
   self: this,
 	getWeather: function(search){
-    search = 'q=' + search
+
 		$.getJSON(`http://api.openweathermap.org/data/2.5/forecast?${search}&type=like&${s.weatherAPIKey}`,function(data){
 				s.object = data.list;
-        console.log("test")
+        //console.log("test")
 				sF.parseWeather(s.object);
         //populate boxes
         vF.populateWeatherBoxes()
@@ -65,17 +66,46 @@ vF = {
   }
 }
 
-$('#search-field').keypress(function(event){
-  //console.log(event.charCode);
-  if(event.charCode=='13'){
-    event.preventDefault();
-    sF.getWeather($(this).val().toString())
 
-  }
-})
 
 $('#geoLocate').click(function(event) {
 	sF.geolocate();
   event.preventDefault();
 
+});
+//
+//Search field stuff
+//
+/*
+$('#searchForm').submit(function(event){
+  event.preventDefault();
+  console.dir(event);
+  //sF.getWeather('q='+$('#searchForm').val().toString())
+})
+*/
+
+$('#search-field').keypress(function(event){
+  //console.log(event.charCode);
+  if(event.charCode=='13'){
+    event.preventDefault();
+    sF.getWeather('q='+$(this).val().toString())
+
+  }
+})
+
+
+//CRAZY EXPERIMENTAL DROPDOWN NONSENSE
+$("#search-field").autocomplete({
+ minLength: 3,
+ //source determines where the autocomplete data comes from.  It then packages the resulting data in the response
+ source: function (request, response) {
+  $.getJSON(`http://gd.geobytes.com/AutoCompleteCity?callback=?&q=${request.term}`,function(data){response(data); }
+  );
+ },
+ //jQuery UI stuff.  UI is the item selected in the dropdown.
+ //Then we make the search field = the selected item
+ select: function (event, ui) {
+  var selectedObj = ui.item;
+  sF.getWeather('q=' + selectedObj.value.toString())
+}
 });
