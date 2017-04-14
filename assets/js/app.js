@@ -11,7 +11,8 @@ let s = {
     rainy: `<i class="wi wi-rain"></i>`,
     thunder: `<i class="wi wi-thunderstorm"></i>`,
     snow: `<i class="wi wi-snow"></i>`,
-  }
+  },
+	autoCompleteCity: ''
 }
 
 //state manipulation functions
@@ -56,6 +57,7 @@ sF = {
 vF = {
   //populate the windows
   populateWeatherBoxes: function(){
+    $('#heroLocation').html(`<p>${s.autoCompleteCity}</p>`);
     $('#heroBox').html(`<img src='http://openweathermap.org/img/w/${s.weather[0].icon}.png'><br>${s.weather[0].weather}`);
     $('#heroData').html(`<span>Temperature: ${s.weather[0].temp}</span><br>
                          <span>Wind Speed: ${s.weather[0].windSpeed}</span>`)
@@ -86,10 +88,10 @@ $('#searchForm').submit(function(event){
 
 $('#search-field').keypress(function(event){
   //console.log(event.charCode);
-  if(event.charCode=='13'){
+  if(event.charCode=='13'){		
     event.preventDefault();
-    sF.getWeather('q='+$(this).val().toString())
-
+    sF.getWeather('q='+$(this).val().toString());	
+		console.log(s.autoCompleteCity);
   }
 })
 
@@ -99,13 +101,19 @@ $("#search-field").autocomplete({
  minLength: 3,
  //source determines where the autocomplete data comes from.  It then packages the resulting data in the response
  source: function (request, response) {
-  $.getJSON(`http://gd.geobytes.com/AutoCompleteCity?callback=?&q=${request.term}`,function(data){response(data); }
+  $.getJSON(`http://gd.geobytes.com/AutoCompleteCity?callback=?&q=${request.term}`,function(data){
+		if(data.length > 0) {
+			s.autoCompleteCity = data[0];
+		}
+		//console.log(data);
+		response(data); }
   );
  },
  //jQuery UI stuff.  UI is the item selected in the dropdown.
  //Then we make the search field = the selected item
  select: function (event, ui) {
   var selectedObj = ui.item;
+	s.autoCompleteCity = selectedObj.value;
   sF.getWeather('q=' + selectedObj.value.toString())
 }
 });
