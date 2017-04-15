@@ -1,3 +1,4 @@
+// PR demo for Tee
 //state object
 let s = {
 	object : {},
@@ -88,9 +89,9 @@ $('#searchForm').submit(function(event){
 
 $('#search-field').keypress(function(event){
   //console.log(event.charCode);
-  if(event.charCode=='13'){		
+  if(event.charCode=='13'){
     event.preventDefault();
-    sF.getWeather('q='+$(this).val().toString());	
+    sF.getWeather('q='+$(this).val().toString());
 		console.log(s.autoCompleteCity);
   }
 })
